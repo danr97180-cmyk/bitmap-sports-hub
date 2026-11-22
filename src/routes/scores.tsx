@@ -59,7 +59,7 @@ function ScoresPage() {
             )}
           >
             <span className="truncate">{label(o)}</span>
-            <span className="text-[10px] text-muted-foreground">({counts[i].data?.length ?? "·"})</span>
+            <span className="text-[10px] text-muted-foreground">({counts[i]?.data?.length ?? "·"})</span>
             {o === offset && <span className="absolute inset-x-0 bottom-0 h-[3px] bg-gold" />}
           </button>
         ))}

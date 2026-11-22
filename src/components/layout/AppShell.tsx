@@ -43,7 +43,7 @@ function MainTabs() {
         <Link
           key={tab.to}
           to={tab.to}
-          activeOptions={{ exact: tab.exact }}
+          activeOptions={{ exact: tab.exact ?? false }}
           className="relative flex shrink-0 items-center gap-2 border-e border-border px-4 py-3 text-sm font-semibold text-foreground/80 transition-colors hover:text-foreground data-[status=active]:text-gold after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:bg-gold after:opacity-0 after:transition-opacity data-[status=active]:after:opacity-100"
         >
           <tab.icon className="h-4 w-4" />

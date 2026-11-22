@@ -9,7 +9,7 @@ import { BrandLogo } from "./BrandLogo";
 import { ACCOUNT_NAV, MAIN_TABS, MANAGEMENT_NAV, type NavItem } from "./nav";
 import { useSignOut } from "./UserMenu";
 
-function NavGroup({ title, items, onNavigate }: { title: string; items: NavItem[]; onNavigate?: () => void }) {
+function NavGroup({ title, items, onNavigate }: { title: string; items: NavItem[]; onNavigate?: (() => void) | undefined }) {
   const { t } = useI18n();
   if (!items.length) return null;
   return (
@@ -20,7 +20,7 @@ function NavGroup({ title, items, onNavigate }: { title: string; items: NavItem[
           key={item.to + item.label}
           to={item.to}
           onClick={onNavigate}
-          activeOptions={{ exact: item.exact }}
+          activeOptions={{ exact: item.exact ?? false }}
           className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground data-[status=active]:bg-primary/10 data-[status=active]:text-primary"
         >
           <item.icon className="h-[18px] w-[18px] shrink-0" />
@@ -31,7 +31,7 @@ function NavGroup({ title, items, onNavigate }: { title: string; items: NavItem[
   );
 }
 
-export function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
+export function SidebarBody({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   const { user } = useSession();
   const { t, lang } = useI18n();
   const handleSignOut = useSignOut();

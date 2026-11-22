@@ -20,6 +20,13 @@ function rng(seedStr: string) {
 
 const int = (r: () => number, min: number, max: number) => Math.floor(r() * (max - min + 1)) + min;
 
+/** Picks a random item from a non-empty list. */
+function pick<T>(r: () => number, list: readonly T[]): T {
+  const item = list[int(r, 0, list.length - 1)];
+  if (item === undefined) throw new Error("pick() needs a non-empty list");
+  return item;
+}
+
 const VENUES = ["Crescent Arena", "Harbor Park", "Northfield Ground", "Cedar Stadium", "Olive Bowl", "Riverside Park"];
 const REFEREES = ["A. Mansour", "D. Peretz", "M. Ortega", "S. Clarke", "K. Rahman", "Y. Golan"];
 const PLAYERS = ["Haddad", "Silva", "Cohen", "Mendes", "Amari", "Novak", "Rossi", "Farah", "Levi", "Ortiz", "Kane", "Diallo"];
@@ -28,7 +35,7 @@ function dayKey(d: Date) {
   return d.toISOString().slice(0, 10);
 }
 
-const KICKOFFS = [
+const KICKOFFS: [number, number][] = [
   [13, 30],
   [17, 0],
   [19, 45],
@@ -47,7 +54,10 @@ function buildFixtures(dateISO: string, now = new Date()): Match[] {
     const round = (Math.floor(day.getTime() / 86400000) % 30) + 1;
 
     for (let i = 0; i < 3; i++) {
-      const [hh, mm] = KICKOFFS[i];
+      const homeId = ids[i * 2];
+      const awayId = ids[i * 2 + 1];
+      if (!homeId || !awayId) break;
+      const [hh, mm] = KICKOFFS[i] ?? [12, 0];
       const kickoff = new Date(day);
       kickoff.setHours(hh, mm, 0, 0);
 
@@ -77,14 +87,14 @@ function buildFixtures(dateISO: string, now = new Date()): Match[] {
         id: `${dateISO}_${league.id}_${i}`,
         leagueId: league.id,
         round,
-        homeId: ids[i * 2],
-        awayId: ids[i * 2 + 1],
+        homeId,
+        awayId,
         kickoff: kickoff.toISOString(),
         status,
         minute,
         score,
-        venue: VENUES[int(r, 0, VENUES.length - 1)],
-        referee: REFEREES[int(r, 0, REFEREES.length - 1)],
+        venue: pick(r, VENUES),
+        referee: pick(r, REFEREES),
       });
     }
   }
@@ -99,7 +109,7 @@ function buildEvents(m: Match): MatchEvent[] {
   const addGoals = (n: number, side: "home" | "away") => {
     for (let i = 0; i < n; i++) {
       const type: EventType = r() < 0.15 ? "penalty" : "goal";
-      events.push({ minute: int(r, 3, Math.max(4, upto)), type, side, player: PLAYERS[int(r, 0, PLAYERS.length - 1)] });
+      events.push({ minute: int(r, 3, Math.max(4, upto)), type, side, player: pick(r, PLAYERS) });
     }
   };
   addGoals(m.score[0], "home");
@@ -110,7 +120,7 @@ function buildEvents(m: Match): MatchEvent[] {
       minute: int(r, 10, Math.max(11, upto)),
       type: r() < 0.12 ? "red" : "yellow",
       side: r() < 0.5 ? "home" : "away",
-      player: PLAYERS[int(r, 0, PLAYERS.length - 1)],
+      player: pick(r, PLAYERS),
     });
   }
   if (upto > 60) {
@@ -119,8 +129,8 @@ function buildEvents(m: Match): MatchEvent[] {
         minute: int(r, 60, upto),
         type: "sub",
         side: i === 0 ? "home" : "away",
-        player: PLAYERS[int(r, 0, PLAYERS.length - 1)],
-        detail: PLAYERS[int(r, 0, PLAYERS.length - 1)],
+        player: pick(r, PLAYERS),
+        detail: pick(r, PLAYERS),
       });
     }
   }

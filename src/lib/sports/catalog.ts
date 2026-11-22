@@ -30,7 +30,7 @@ export const TEAMS: Record<string, Team> = {
   bsk: { id: "bsk", short: "BSK", color: "15", name: { en: "Bnei Sakhnin", ar: "أبناء سخنين", he: "בני סכנין" } },
 };
 
-export const LEAGUES: League[] = [
+export const LEAGUES: [League, ...League[]] = [
   {
     id: "epl",
     flag: "🏴",
@@ -62,4 +62,5 @@ export const LEAGUES: League[] = [
 ];
 
 export const getLeague = (id: string) => LEAGUES.find((l) => l.id === id);
-export const getTeam = (id: string) => TEAMS[id];
+export const getTeam = (id: string): Team =>
+  TEAMS[id] ?? { id, short: id.slice(0, 3).toUpperCase(), color: "140", name: { en: id, ar: id, he: id } };

@@ -28,7 +28,7 @@ export interface ActivityEntry {
   userId: string;
   type: ActivityType;
   at: string;
-  detail?: string;
+  detail?: string | undefined;
 }
 
 const seedDate = "2026-09-01T10:00:00.000Z";
