@@ -1,0 +1,11 @@
+/**
+ * Never silently publish generated fixtures as real football results.
+ * Demo fixtures require an explicit opt-in and are disabled by default.
+ * A licensed live provider must be connected before production scores are shown.
+ */
+export function isDemoSportsEnabled(env: Record<string, unknown>): boolean {
+  return env.VITE_ENABLE_SAMPLE_SPORTS === "true" && env.DEV === true;
+}
+
+export const LIVE_PROVIDER_REQUIRED =
+  "Live football data is not connected. Configure a licensed sports data provider before publishing match results.";
